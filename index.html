@@ -43,6 +43,8 @@ html, body {
 /* ─── SCREENS ─── */
 .screen { display: none; width: 100%; }
 .screen.active { display: block; animation: sIn .28s ease; }
+#screen-result.active,
+#screen-loading.active { display: flex; flex-direction: column; }
 @keyframes sIn {
   from { opacity:0; transform:translateY(10px); }
   to   { opacity:1; transform:translateY(0); }
@@ -304,11 +306,12 @@ html, body {
    LOADING
 ══════════════════════════════════════ */
 #screen-loading {
-  background: var(--bg); min-height: 100vh;
-  display: none; flex-direction: column;
-  align-items: center; justify-content: center; gap: 24px;
+  background: var(--bg);
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  min-height: 100vh;
 }
-#screen-loading.active { display: flex; }
 .ld-logo { font-size: 24px; font-weight: 700; color: var(--accent); letter-spacing: -0.6px; }
 .ld-dots { display: flex; gap: 10px; }
 .ld-dots span {
@@ -326,37 +329,50 @@ html, body {
    카드: top:181, left:40(calc 8.33%+6.5), w:323
    버튼들: top:705, left:16, w:370, gap:10
 ══════════════════════════════════════ */
-#screen-result { position: relative; background: var(--bg); min-height: 913px; }
+#screen-result {
+  background: var(--bg);
+  align-items: center;
+  padding: 0 16px 40px;
+  min-height: 100vh;
+}
 .rc-logo {
-  position: absolute; top: 79px; left: 16px;
+  width: 100%;
+  padding-top: 52px;
   font-size: 22px; font-weight: 700; color: var(--accent); letter-spacing: -0.72px;
+  margin-bottom: 12px;
 }
 .rc-subtitle {
-  position: absolute; top: 129px; left: 16px; width: 370px;
+  width: 100%;
   font-size: 24px; font-weight: 700; color: var(--white); letter-spacing: -0.72px;
+  margin-bottom: 20px;
+}
+/* 카드 스택 래퍼 */
+.rc-stack {
+  position: relative; width: 323px; height: 478px;
+  flex-shrink: 0; margin-bottom: 20px;
 }
 /* 카드 그림자 레이어 */
 .rc-shadow1 {
-  position: absolute; top: 199px;
-  left: calc(41.67% + 3.5px); transform: translateX(-50%);
-  width: 310px; height: 435px; border-radius: var(--r-card);
+  position: absolute; top: 18px;
+  left: calc(50% - 20px); transform: translateX(-50%);
+  width: 310px; height: 450px; border-radius: var(--r-card);
   background: rgba(227,234,45,.6); box-shadow: 0 4px 4px rgba(0,0,0,.25);
 }
 .rc-shadow2 {
-  position: absolute; top: 205px;
-  left: calc(58.33% - 3.5px); transform: translateX(-50%);
-  width: 310px; height: 435px; border-radius: var(--r-card);
+  position: absolute; top: 24px;
+  left: calc(50% + 18px); transform: translateX(-50%);
+  width: 310px; height: 450px; border-radius: var(--r-card);
   background: rgba(227,234,45,.6); box-shadow: 0 4px 4px rgba(0,0,0,.25);
 }
-/* 메인 카드: top:181, left:calc(50%+0.5), w:323 → translateX(-50%) */
+/* 메인 카드 */
 .rc-card {
-  position: absolute; top: 181px;
-  left: calc(50% + 0.5px); transform: translateX(-50%);
-  width: 323px; height: 468px; border-radius: var(--r-card);
+  position: absolute; top: 0;
+  left: 50%; transform: translateX(-50%);
+  width: 323px; min-height: 468px; border-radius: var(--r-card);
   background: var(--accent); cursor: pointer;
   box-shadow: 0 4px 4px rgba(0,0,0,.25);
   display: flex; flex-direction: column; justify-content: center;
-  padding: 0 29px; gap: 30px; z-index: 2;
+  padding: 28px 29px; gap: 24px; z-index: 2;
 }
 .rc-card:active { transform: translateX(-50%) scale(.98); }
 /* 카드 내부 — 이름+이모지 */
@@ -414,9 +430,9 @@ html, body {
   display: flex; align-items: center; justify-content: center;
   font-size: 15px; font-weight: 700; color: var(--accent); letter-spacing: -0.45px; cursor: pointer;
 }
-/* 하단 버튼: top:705, left:16, w:370, gap:10 */
+/* 하단 버튼 */
 .rc-actions {
-  position: absolute; top: 705px; left: 16px; width: 370px;
+  width: 100%; max-width: 370px;
   display: flex; flex-direction: column; gap: 10px;
 }
 .btn-primary {
@@ -716,24 +732,26 @@ html, body {
 <div class="screen" id="screen-result">
   <span class="rc-logo">16WP-test</span>
   <div class="rc-subtitle">나의 창작 방식 유형은-?</div>
-  <div class="rc-shadow1"></div>
-  <div class="rc-shadow2"></div>
-  <div class="rc-card" onclick="showDetail()" id="rcCard">
-    <div class="rc-top">
-      <div class="rc-emoji" id="rcEmoji">🛠️</div>
-      <div class="rc-name-wrap">
-        <div class="rc-name" id="rcName">고독한 장인</div>
-        <div class="rc-code" id="rcCode">SEPC-P</div>
+  <div class="rc-stack">
+    <div class="rc-shadow1"></div>
+    <div class="rc-shadow2"></div>
+    <div class="rc-card" onclick="showDetail()" id="rcCard">
+      <div class="rc-top">
+        <div class="rc-emoji" id="rcEmoji">🛠️</div>
+        <div class="rc-name-wrap">
+          <div class="rc-name" id="rcName">고독한 장인</div>
+          <div class="rc-code" id="rcCode">SEPC-P</div>
+        </div>
       </div>
-    </div>
-    <div class="rc-tagline" id="rcTagline"></div>
-    <div class="rc-axes" id="rcAxes"></div>
-    <div class="rc-box-wrap">
-      <div class="rc-white-box">
-        <div class="rc-box-label">이 유형은?</div>
-        <div class="rc-box-text" id="rcSummary"></div>
+      <div class="rc-tagline" id="rcTagline"></div>
+      <div class="rc-axes" id="rcAxes"></div>
+      <div class="rc-box-wrap">
+        <div class="rc-white-box">
+          <div class="rc-box-label">이 유형은?</div>
+          <div class="rc-box-text" id="rcSummary"></div>
+        </div>
+        <div class="rc-detail-btn">내 유형 자세히 보기 →</div>
       </div>
-      <div class="rc-detail-btn">내 유형 자세히 보기 →</div>
     </div>
   </div>
   <div class="rc-actions">

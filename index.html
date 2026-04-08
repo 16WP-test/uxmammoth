@@ -43,6 +43,8 @@ html, body {
 /* ─── SCREENS ─── */
 .screen { display: none; width: 100%; }
 .screen.active { display: block; animation: sIn .28s ease; }
+#screen-intro.active,
+#screen-question.active,
 #screen-result.active,
 #screen-loading.active { display: flex; flex-direction: column; }
 @keyframes sIn {
@@ -51,16 +53,20 @@ html, body {
 }
 
 /* ══════════════════════════════════════
-   INTRO  (피그마: 402×874, position fixed)
+   INTRO — flex 레이아웃, 글자 고정 여백만 반응
 ══════════════════════════════════════ */
 #screen-intro {
-  position: relative; min-height: 874px; background: var(--bg);
+  background: var(--bg);
+  align-items: center; justify-content: center;
+  min-height: 100vh;
+  padding: 0 16px;
 }
-/* 이모지: top:145, center — 5개 자동 순환 애니메이션 */
+/* 이모지 */
 .intro-icon {
-  position: absolute; top: 145px; left: 50%; transform: translateX(-50%);
-  font-size: 40px; width: 60px; height: 60px; text-align: center; line-height: 60px;
-  /* 컨테이너 overflow 숨김으로 한 번에 하나만 표시 */
+  font-size: 40px; width: 60px; height: 60px;
+  text-align: center; line-height: 60px;
+  margin-bottom: clamp(28px, 5vh, 48px);
+  flex-shrink: 0;
 }
 .intro-icon-inner {
   position: relative; width: 60px; height: 60px;
@@ -71,9 +77,8 @@ html, body {
   width: 60px; height: 60px; line-height: 60px;
   text-align: center; font-size: 40px;
   opacity: 0;
-  animation: iconCycle 3.75s infinite; /* 0.75s × 5 = 3.75s */
+  animation: iconCycle 3.75s infinite;
 }
-/* 각 아이템마다 delay로 순서 지정 */
 .intro-icon-inner span:nth-child(1) { animation-delay: 0s; }
 .intro-icon-inner span:nth-child(2) { animation-delay: 0.75s; }
 .intro-icon-inner span:nth-child(3) { animation-delay: 1.50s; }
@@ -81,47 +86,48 @@ html, body {
 .intro-icon-inner span:nth-child(5) { animation-delay: 3.00s; }
 
 @keyframes iconCycle {
-  /* 전체 주기 3.75s 중 0.75s(20%) 동안만 보임 */
   0%         { opacity: 0; transform: translateY(6px) scale(0.9); }
   4%         { opacity: 1; transform: translateY(0)   scale(1);   }
   16%        { opacity: 1; transform: translateY(0)   scale(1);   }
   20%        { opacity: 0; transform: translateY(-6px) scale(0.9); }
   100%       { opacity: 0; transform: translateY(-6px) scale(0.9); }
 }
-/* 배지+타이틀 블록: top:227, left:16, w:370 */
+
+/* 배지+타이틀 */
 .intro-headline {
-  position: absolute; top: 227px; left: 16px; width: 370px;
   display: flex; flex-direction: column; align-items: center; gap: 0;
+  margin-bottom: clamp(60px, 20vh, 200px); /* 여백만 줄어듦 */
+  width: 100%;
 }
 .intro-badge {
-  display: flex; align-items: center; gap: 4px; margin-bottom: 0;
+  display: flex; align-items: center; gap: 4px;
 }
 .intro-badge .star { color: var(--accent); font-size: 14px; }
 .intro-badge span {
   color: var(--accent); font-size: 16px; font-weight: 600;
   letter-spacing: -0.48px; white-space: nowrap;
 }
-/* 타이틀: 피그마 32px Bold, 한 줄 */
+/* 타이틀: 고정 크기 */
 .intro-title {
   color: var(--white); font-size: 32px; font-weight: 700;
   letter-spacing: -0.96px; line-height: normal;
-  white-space: nowrap; text-align: center; width: 370px;
+  white-space: nowrap; text-align: center;
 }
-/* 메타: top:688, center */
+/* 메타 */
 .intro-meta {
-  position: absolute; top: 688px; left: 50%; transform: translateX(-50%);
   display: flex; gap: 20px; white-space: nowrap;
   color: var(--gray); font-size: 12px; letter-spacing: -0.36px;
+  margin-bottom: 18px;
 }
 .intro-meta .lbl { font-weight: 300; }
 .intro-meta .val { font-weight: 700; font-size: 13px; margin-left: 3px; letter-spacing: -0.39px; }
-/* 시작버튼: top:720, left:16, w:370, h:59 */
+/* 시작 버튼 */
 .intro-btn {
-  position: absolute; top: 720px; left: 16px; width: 370px; height: var(--btn-h);
+  width: 100%; max-width: 370px; height: var(--btn-h);
   background: var(--accent); border: none; border-radius: var(--r-btn);
   color: var(--bg); font-size: 20px; font-weight: 700;
   cursor: pointer; font-family: var(--font); letter-spacing: -0.5px;
-  line-height: var(--btn-h);
+  flex-shrink: 0;
 }
 .intro-btn:active { opacity: .85; }
 
@@ -221,50 +227,56 @@ html, body {
 .onb-start-btn:active { opacity: .9; }
 
 /* ══════════════════════════════════════
-   QUESTION  (피그마: 402×874, position fixed)
+   QUESTION — flex 레이아웃, 글자 고정 여백만 반응
 ══════════════════════════════════════ */
-#screen-question { position: relative; background: var(--bg); min-height: 874px; }
-/* 로고: top:79, left:16 */
-.q-logo {
-  position: absolute; top: 79px; left: 16px;
-  font-size: 22px; font-weight: 700; color: var(--accent); letter-spacing: -0.72px;
+#screen-question {
+  background: var(--bg); min-height: 100vh;
+  padding: 0 16px;
 }
-/* n/36: top:125, right:16 */
+.q-logo {
+  font-size: 22px; font-weight: 700; color: var(--accent); letter-spacing: -0.72px;
+  flex-shrink: 0;
+}
+/* n/36: 로고 오른쪽 정렬 — absolute 유지하되 flex header로 감쌀 수 없으니 relative trick */
 .q-cnt {
-  position: absolute; top: 125px; right: 16px;
   font-size: 14px; color: var(--accent); letter-spacing: -0.42px;
 }
 .q-cnt .cur { font-weight: 700; }
 .q-cnt .tot { font-weight: 300; }
-/* progress bar: top:133, h:44 */
+/* progress bar */
 .q-prog-wrap {
-  position: absolute; top: 133px; left: 0; width: 100%; height: 44px;
-  display: flex; align-items: center;
+  width: 100%; height: 6px; margin-bottom: 0;
+  flex-shrink: 0; position: relative;
 }
 .q-prog-track {
-  position: absolute; left: 16px; right: 16px; height: 6px;
+  position: absolute; left: 0; right: 0; height: 6px;
   background: rgba(120,120,120,.2); border-radius: 3px; overflow: hidden;
 }
 .q-prog-fill {
   height: 100%; background: var(--accent); border-radius: 3px;
   transition: width .4s cubic-bezier(.4,0,.2,1);
 }
-/* 질문 텍스트: top:201, left:16, w:370 */
-.q-text-wrap { position: absolute; top: 201px; left: 16px; width: 370px; }
+/* 질문 텍스트 — flex-grow로 남은 공간 차지, 상단 정렬 */
+.q-text-wrap {
+  flex: 1; display: flex; align-items: flex-start;
+  padding: clamp(20px, 4vh, 44px) 0;
+  min-height: 0;
+}
 .q-text {
   font-size: 24px; font-weight: 700; color: var(--white);
   line-height: normal; letter-spacing: -0.72px;
 }
-/* 스케일 라벨: top:661, left:16, w:370 */
+/* 스케일 라벨 */
 .q-scale-lbl {
-  position: absolute; top: 661px; left: 16px; width: 370px;
   display: flex; justify-content: space-between;
   font-size: 13px; font-weight: 400; color: var(--white); letter-spacing: -0.39px;
+  margin-bottom: 10px; flex-shrink: 0;
 }
-/* 스케일 버튼: top:567, left:5, w:391, gap:12 */
+/* 스케일 버튼 */
 .q-scale-btns {
-  position: absolute; top: 567px; left: 5px; width: 391px;
   display: flex; align-items: center; justify-content: center; gap: 12px;
+  margin: 0 -11px;
+  flex-shrink: 0;
 }
 .sw {
   display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
@@ -281,10 +293,11 @@ html, body {
 .sw.sv3 .sbtn                 { width: 39.75px; height: 39.75px; }
 .sw .sbtn.on { background: var(--accent); border-color: var(--accent); }
 .sw:active .sbtn { opacity: .7; }
-/* 액션 버튼: top:710, left:16, right:16 */
+/* 액션 버튼 */
 .q-actions {
-  position: absolute; top: 710px; left: 16px; right: 16px;
   display: flex; gap: 8px;
+  padding: clamp(12px, 2.5vh, 20px) 0 clamp(24px, 4vh, 40px);
+  flex-shrink: 0;
 }
 .btn-back {
   width: 69px; height: var(--btn-h);
@@ -307,10 +320,8 @@ html, body {
 ══════════════════════════════════════ */
 #screen-loading {
   background: var(--bg);
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-  min-height: 100vh;
+  align-items: center; justify-content: center;
+  gap: 24px; min-height: 100vh;
 }
 .ld-logo { font-size: 24px; font-weight: 700; color: var(--accent); letter-spacing: -0.6px; }
 .ld-dots { display: flex; gap: 10px; }
@@ -602,31 +613,11 @@ html, body {
 }
 .toast.show { transform: translateX(-50%) translateY(0); }
 
-/* ══ 반응형: 작은 화면(키 780px 이하)에서 vh 기반으로 요소 재배치 ══ */
-@media (max-height: 780px) {
-  .intro-icon     { top: 13vh; }
-  .intro-headline { top: 20vh; }
-  .intro-meta     { top: 80vh; }
-  .intro-btn      { top: 87vh; }
-  #screen-intro   { min-height: 100vh; }
-
-  .q-logo         { top: 5vh; }
-  .q-cnt          { top: 8.5vh; }
-  .q-prog-wrap    { top: 10.5vh; }
-  .q-text-wrap    { top: 16vh; }
-  .q-scale-btns   { top: 65vh; }
-  .q-scale-lbl    { top: 76vh; }
-  .q-actions      { top: 82vh; }
-  #screen-question{ min-height: 100vh; }
-  /* result card는 반응형 적용 안 함 — 피그마 고정 수치 유지 */
-}
-
+/* ══ 반응형: flex 레이아웃으로 전환했으므로 미디어쿼리 최소화 ══ */
 @media (max-width: 380px) {
-  /* result card 너비/간격은 고정 유지 */
-  .rc-name                   { font-size: clamp(18px, 6vw, 28px); }
-  .intro-title               { font-size: clamp(24px, 8vw, 32px); }
-  .intro-btn, .onb-start-btn { width: calc(100% - 32px); }
-  .q-scale-btns              { left: 0; width: 100%; }
+  .rc-name       { font-size: clamp(18px, 6vw, 28px); }
+  .intro-title   { font-size: clamp(26px, 7.5vw, 32px); }
+  .intro-btn, .onb-start-btn { width: 100%; }
 }
 </style>
 </head>
@@ -701,9 +692,11 @@ html, body {
 
 <!-- ══ QUESTION ══ -->
 <div class="screen" id="screen-question">
-  <span class="q-logo">16WP-test</span>
-  <div class="q-cnt"><span class="cur" id="qCur">1</span><span class="tot">/36</span></div>
-  <div class="q-prog-wrap">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;padding-top:52px;flex-shrink:0;">
+    <span class="q-logo" style="padding-top:0;">16WP-test</span>
+    <div class="q-cnt"><span class="cur" id="qCur">1</span><span class="tot">/36</span></div>
+  </div>
+  <div class="q-prog-wrap" style="margin-top:10px;">
     <div class="q-prog-track"><div class="q-prog-fill" id="qProgFill" style="width:0%"></div></div>
   </div>
   <div class="q-text-wrap"><div class="q-text" id="qText"></div></div>
@@ -1283,17 +1276,15 @@ async function saveResultImage(){
         document.head.appendChild(s);
       });
     }
-    // detail-scroll 전체를 캡처 (hero card + 섹션)
-    const target = document.querySelector('.detail-scroll');
+    // 결과 카드(노란 카드) 캡처
+    const target = document.getElementById('rcCard');
     const canvas = await html2canvas(target, {
-      scale: 2,
-      backgroundColor: '#eaeaea',
+      scale: 3,
+      backgroundColor: '#e3ea2d',
       useCORS: true,
       allowTaint: true,
       logging: false,
-      windowWidth: 402,
     });
-    // 갤러리 저장: a 태그 download
     const link = document.createElement('a');
     link.download = `16WP-${resType}-${supAxis}.png`;
     link.href = canvas.toDataURL('image/png');

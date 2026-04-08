@@ -721,6 +721,33 @@ html, body {
   <div class="ld-msg">유형 분석 중...</div>
 </div>
 
+<!-- ══ 캡처 전용 레이어 (화면에 안 보임) ══ -->
+<div id="captureLayer" style="
+  position:fixed; top:-9999px; left:-9999px;
+  width:402px; background:#1b1b1b;
+  display:flex; flex-direction:column; align-items:center;
+  padding:0 16px 48px; pointer-events:none;
+">
+  <span style="
+    width:100%; padding-top:52px; margin-bottom:12px;
+    font-size:22px; font-weight:700; color:#e3ea2d; letter-spacing:-0.72px;
+    font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+  ">16WP-test</span>
+  <div style="
+    width:100%; font-size:24px; font-weight:700; color:#fafafa;
+    letter-spacing:-0.72px; margin-bottom:20px;
+    font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+  ">나의 창작 방식 유형은-?</div>
+  <!-- 카드 복사본 -->
+  <div id="captureCard" style="
+    width:323px; border-radius:20px; background:#e3ea2d;
+    display:flex; flex-direction:column; justify-content:center;
+    padding:28px 29px; gap:24px;
+    box-shadow:0 4px 4px rgba(0,0,0,.25);
+    font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+  "></div>
+</div>
+
 <!-- ══ RESULT CARD ══ -->
 <div class="screen" id="screen-result">
   <span class="rc-logo">16WP-test</span>
@@ -1147,15 +1174,8 @@ function renderResult(ratio){
   // 구글 시트에 결과 전송
   sendToSheet();
 
-  // result card
-  document.getElementById('rcEmoji').textContent=t.emoji;
-  document.getElementById('rcName').textContent=t.name;
-  document.getElementById('rcCode').textContent=code;
-  document.getElementById('rcTagline').innerHTML=t.tagline;
-  document.getElementById('rcSummary').textContent=t.summary;
-
-  // axes
-  document.getElementById('rcAxes').innerHTML=AXIS_META.map(ax=>{
+  // axes HTML 공통 생성
+  const axesHTML = AXIS_META.map(ax=>{
     const letter=resType[AXIS_META.indexOf(ax)];
     const pct=Math.round(ratio[ax.key]*100);
     return `<div class="rc-axis-row">
@@ -1164,6 +1184,34 @@ function renderResult(ratio){
       <span class="rc-axis-val">${letter}</span>
     </div>`;
   }).join('');
+
+  // result card
+  document.getElementById('rcEmoji').textContent=t.emoji;
+  document.getElementById('rcName').textContent=t.name;
+  document.getElementById('rcCode').textContent=code;
+  document.getElementById('rcTagline').innerHTML=t.tagline;
+  document.getElementById('rcSummary').textContent=t.summary;
+  document.getElementById('rcAxes').innerHTML=axesHTML;
+
+  // 캡처 전용 카드 채우기 (로고+제목은 captureLayer HTML에 이미 있음)
+  const f='font-family:\'Apple SD Gothic Neo\',\'Noto Sans KR\',sans-serif;';
+  document.getElementById('captureCard').innerHTML=`
+    <div style="display:flex;align-items:flex-start;gap:7px;min-height:64px;">
+      <span style="font-size:48px;line-height:1.1;flex-shrink:0;">${t.emoji}</span>
+      <div style="display:flex;flex-direction:column;justify-content:center;min-width:0;flex:1;">
+        <div style="font-size:clamp(22px,7vw,34px);font-weight:800;color:#1b1b1b;letter-spacing:-0.8px;line-height:1.15;${f}">${t.name}</div>
+        <div style="font-size:17px;font-weight:300;color:#1b1b1b;letter-spacing:-0.5px;margin-top:2px;${f}">${code}</div>
+      </div>
+    </div>
+    <div style="font-size:15px;font-weight:500;color:#1b1b1b;line-height:normal;letter-spacing:-0.45px;${f}">${t.tagline}</div>
+    <div style="display:flex;flex-direction:column;gap:6px;">${axesHTML}</div>
+    <div style="display:flex;flex-direction:column;gap:9px;">
+      <div style="background:white;border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:5px;">
+        <div style="font-size:10px;font-weight:700;color:#a0a517;letter-spacing:-0.3px;${f}">이 유형은?</div>
+        <div style="font-size:12px;font-weight:500;color:#1b1b1b;line-height:normal;letter-spacing:-0.36px;${f}">${t.summary}</div>
+      </div>
+    </div>
+  `;
 
   // detail hero
   document.getElementById('dhEmoji').textContent=t.emoji;
@@ -1276,15 +1324,23 @@ async function saveResultImage(){
         document.head.appendChild(s);
       });
     }
-    // 결과 카드(노란 카드) 캡처
-    const target = document.getElementById('rcCard');
-    const canvas = await html2canvas(target, {
+
+    const layer = document.getElementById('captureLayer');
+
+    // 캡처 직전에 화면 밖에서 렌더링되도록 위치 유지하고 크기만 확인
+    await new Promise(r => setTimeout(r, 80));
+
+    const canvas = await html2canvas(layer, {
       scale: 3,
-      backgroundColor: '#e3ea2d',
+      backgroundColor: '#1b1b1b',
       useCORS: true,
       allowTaint: true,
       logging: false,
+      width: 402,
+      height: layer.scrollHeight,
+      windowWidth: 402,
     });
+
     const link = document.createElement('a');
     link.download = `16WP-${resType}-${supAxis}.png`;
     link.href = canvas.toDataURL('image/png');

@@ -1345,7 +1345,7 @@ async function saveResultImage(){
     link.download = `16WP-${resType}-${supAxis}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
-    showToast('이미지가 저장됐어요! 🖼️');
+    showToast('이미지를 다운받아주세요 🖼️');
   } catch(e){
     console.error(e);
     showToast('저장 실패 — 브라우저에서 스크린샷을 사용해주세요');

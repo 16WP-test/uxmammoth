@@ -602,23 +602,14 @@ html, body {
   .q-scale-lbl    { top: 76vh; }
   .q-actions      { top: 82vh; }
   #screen-question{ min-height: 100vh; }
-
-  .rc-logo        { top: 5vh; }
-  .rc-subtitle    { top: 10vh; }
-  .rc-shadow1     { top: 14vh; }
-  .rc-shadow2     { top: 15vh; }
-  .rc-card        { top: 13vh; }
-  .rc-actions     { top: 79vh; }
-  #screen-result  { min-height: 100vh; }
+  /* result card는 반응형 적용 안 함 — 피그마 고정 수치 유지 */
 }
 
 @media (max-width: 380px) {
-  .rc-card                   { width: calc(100% - 52px); }
-  .rc-shadow1, .rc-shadow2   { width: calc(100% - 72px); }
+  /* result card 너비/간격은 고정 유지 */
   .rc-name                   { font-size: clamp(18px, 6vw, 28px); }
   .intro-title               { font-size: clamp(24px, 8vw, 32px); }
   .intro-btn, .onb-start-btn { width: calc(100% - 32px); }
-  .rc-actions                { left: 16px; width: calc(100% - 32px); }
   .q-scale-btns              { left: 0; width: 100%; }
 }
 </style>
